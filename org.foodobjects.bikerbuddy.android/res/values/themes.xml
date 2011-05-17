@@ -1,0 +1,4 @@
+<resources>
+    <style name="PewPewTheme" parent="android:style/@android:style/Theme.Light">
+    </style>
+</resources>
