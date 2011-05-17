@@ -7,17 +7,17 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 public class GraphView extends SurfaceView implements SurfaceHolder.Callback {
-	private HelloThread thread = null;
+	private PaintingThread thread = null;
 
 	public GraphView(Context context) {
 		super(context);
 		SurfaceHolder holder = getHolder();
 		holder.addCallback(this);
-		thread = new HelloThread(holder, context, new Handler());
+		thread = new PaintingThread(holder, context, new Handler());
 		setFocusable(true); // need to get the key events
 	}
 
-	public HelloThread getThread() {
+	public PaintingThread getThread() {
 		return thread;
 	}
 
