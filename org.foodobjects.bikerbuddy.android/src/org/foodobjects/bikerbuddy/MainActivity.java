@@ -16,14 +16,21 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.Window;
 import android.widget.Button;
 
 public class MainActivity extends Activity {
-
+	 private GraphView view = null;
+	   
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		showLoginScreen();
+		//showLoginScreen();
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        if (view == null) {
+        	view = new GraphView(this);
+        }
+        setContentView(view);		
 	}
 
 	private void showLoginScreen() {

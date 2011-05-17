@@ -27,7 +27,9 @@ class HelloThread extends Thread {
 		this.keyCode = keyCode;
 	}
 	public void doKeyUp(int keyCode, KeyEvent msg) {
-		this.keyCode = -1;
+		if (this.keyCode == keyCode) {
+			this.keyCode = -1;
+		}
 	}
 	public void run() {
 		int fps = 0;
@@ -35,17 +37,17 @@ class HelloThread extends Thread {
 		boolean shouldDraw = true;
 		FPSTimer timer = new FPSTimer(60);
 		while (run) {
-			Canvas c = null;
+			Canvas canvas = null;
 			if (shouldDraw) {
 				try {
-					c = surfaceHolder.lockCanvas(null);
+					canvas = surfaceHolder.lockCanvas(null);
 					synchronized (surfaceHolder) {
-						doDraw(c);
+						doDraw(canvas);
 					}
 					fps++;
 				} finally {
-					if (c != null)
-						surfaceHolder.unlockCanvasAndPost(c);
+					if (canvas != null)
+						surfaceHolder.unlockCanvasAndPost(canvas);
 				}
 			}
 			shouldDraw = timer.shouldDraw();
@@ -62,12 +64,16 @@ class HelloThread extends Thread {
 		Paint paint = new Paint();
 		//paint.setAntiAlias(true);
 		//canvas.drawBitmap(image, 0, 0, null);
-
+		paint.setStyle(Paint.Style.FILL);
+        paint.setColor(Color.argb(255,0,0,0));
+        canvas.drawRect(new Rect(0,0,canvas.getWidth(),canvas.getHeight()),paint);
+		
+		
+		
 		if (keyCode == KeyEvent.KEYCODE_DPAD_UP) y--;
 		if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN) y++;
 		if (keyCode == KeyEvent.KEYCODE_DPAD_LEFT) x--;
 		if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT) x++;
-		paint.setStyle(Paint.Style.FILL);
         paint.setColor(Color.argb(255,0,0,255));
         canvas.drawRect(new Rect(x+0,y+0,x+40,y+40),paint);
 
