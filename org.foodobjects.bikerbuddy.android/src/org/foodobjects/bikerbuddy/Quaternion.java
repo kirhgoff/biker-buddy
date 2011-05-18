@@ -20,4 +20,9 @@ public class Quaternion {
 	public double getX() {
 		return x;
 	}
+	
+	@Override
+	public String toString() {
+		return time + ", " + x + ", " + y + ", " + z;
+	}
 }

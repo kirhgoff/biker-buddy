@@ -21,11 +21,12 @@ class PaintingThread extends Thread {
 	private SurfaceHolder surfaceHolder;
 	private boolean run = false;
 	
-	private List<Quaternion> data = fillRandomQuaternions ();
 	private long minTime = 0;
 	private long maxTime = 5000;
 	private double minX = Double.MAX_VALUE;
 	private double maxX = Double.MIN_VALUE;
+	private List<Quaternion> data = fillRandomQuaternions ();
+	private boolean flag = false;
 	
 	public PaintingThread(SurfaceHolder holder, Context context, Handler handler) {
 		surfaceHolder = holder;
@@ -35,7 +36,7 @@ class PaintingThread extends Thread {
 		Log.i ("BIKE", "Calculating data");
 		List<Quaternion> data = new ArrayList<Quaternion> (500);
 		for (int i = 0; i < 5000; i += 100) {
-			data.add (new Quaternion (i*i, Math.sqrt (i), i*Math.tan(i), i));
+			data.add (new Quaternion (((double)i)*i/10000, Math.sqrt (i), i*Math.tan(i), i));
 		}
 		
 		for (int i = 0; i < data.size(); i++) {
@@ -90,7 +91,7 @@ class PaintingThread extends Thread {
 			shouldDraw = timer.shouldDraw();
 			long now = System.currentTimeMillis();
 			if (now - currentMillis > 1000) {
-				Log.d("BIKE", "FPS=" + (fps * 1000 / ((double)now - currentMillis)));
+				//Log.d("BIKE", "FPS=" + (fps * 1000 / ((double)now - currentMillis)));
 				fps = 0;
 				currentMillis = now;
 			}
@@ -108,15 +109,28 @@ class PaintingThread extends Thread {
 		canvas.drawRect(new Rect(0,0,width,height),paint);
         
 		double timeRatio = ((double) width/ (maxTime - minTime));
-		double xRatio = ((double) height/ (maxX - minX));
+		double xRatio = ((double) height)/ (maxX - minX);
+		if (!flag) {
+			Log.i ("BIKE", "minTime=" + minTime + ", maxTime=" + maxTime);
+			Log.i ("BIKE", "minX=" + minX + ", maxX=" + maxX);		
+			Log.i ("BIKE", "width=" + width + ", height=" + height);			
+			Log.i ("BIKE", "Ratio  time=" + timeRatio + ", x=" + xRatio);
+		}
+	
 		for (Iterator<Quaternion> iterator = data.iterator(); iterator.hasNext();) {
 			Quaternion quaternion = iterator.next();
 			
-			long screenX = Math.round(quaternion.getTime () * timeRatio);
-			long screenY = Math.round(quaternion.getX () * xRatio);
+			long time = quaternion.getTime ();
+			double x = quaternion.getX ();
+			long screenX = Math.round(time * timeRatio);
+			long screenY = Math.round((x - minX) * xRatio);
+			if (!flag) {
+				Log.i ("BIKE", "Drawing: quanternion=[" + quaternion + "] screen=("+ screenX + ", "  + screenY + ")");
+			}
 
 			paint.setColor(Color.argb(255,128,96,0));
 			canvas.drawCircle(screenX, screenY, 5, paint);
 		}
+		flag = true;
 	}
 }
